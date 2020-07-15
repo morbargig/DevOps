@@ -1,0 +1,21 @@
+version: '3.3'
+services:
+    app:
+        build:         
+            context: .
+            dockerfile: ./Dockerfile
+        ports: 
+            - "5000:5000"
+    
+    server:
+        image: elasticsearch:6.4.0
+        environment: 
+            - "discovery.type=single-node"
+    # nginx:
+    #     image: nginxapp
+    #     volumes: 
+    #         - "./project/flask-app/static:/static"
+    #     ports: 
+    #         - "80:80"
+
+    

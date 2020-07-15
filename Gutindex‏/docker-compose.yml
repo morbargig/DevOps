@@ -1,0 +1,44 @@
+version: '3.3'
+services:
+    db:
+        container_name: db
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: 123456
+        volumes: 
+            - "./init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh"
+        # entrypoint: bash -c 'while  true ;  do if [ bash ./checkConection.sh ] ; then break;else echo "not conected"; fi ; sleep 2; done'
+    gutindex:
+        container_name: gutindex
+        build:         
+            context: .
+            dockerfile: ./Gutindex.Dockerfile
+        # restart: always
+        ports: 
+            - "8000:80"
+        volumes: 
+            - "./checkConection.py:/checkConection.py"
+            - "./runFile.sh:/runFile.sh"
+        # entrypoint: python3 /checkConection.py
+        entrypoint: /runFile.sh
+
+        # entrypoint: python3 /checkConection.py
+        # entrypoint: python3 /project/manage.py migrate     
+        # entrypoint: bash -c 'while  true ;  do echo what we doing ? ; sleep 2; done'
+    front:
+        container_name: revers_proxy
+        image: nginx
+        depends_on: 
+            - revers_proxy
+            - db
+        ports:
+            - 80:80
+            # - "8080:8000"
+        volumes:
+            # - <path/to/your/config>:/etc/nginx
+            # - <path/to/your/certs>:/etc/ssl/private
+            - ./project/static:/etc/nginx/
+        environment:
+            - NGINX_HOST=foobar.com
+            - NGINX_PORT=80

@@ -1,0 +1,20 @@
+install iamge -> docker pull jenkins/jenkins
+setup jenkins -> docker run -p 8080:8080  -v dockervolum:/var/jenkins_home jenkins/jenkins
+
+create ssh key pair 
+ssh-keygen -t rsa -b 2048 -C "morbargig@gmail.com"
+cat /var/jenkins_home/.ssh/id_rsa.pub
+
+password - 8b680f70ac5347b0b1d4f0ef4be7c1e3
+
+
+remote host to gitlab project   ->  git remote add origin http://localhost:8020/morbargig/cowsay.git
+push from host to gitlab        -> git push --set-upstream origin master
+going to jenkins folder         -> cd /var/jenkins_home
+clone project from local gilab  ->  git clone git@gitlab:morbargig/cowsay.git
+
+build image from Dockerfile     ->  docker build - < test.Dockerfile || docker build -t cowsay .
+
+docker run -d --name cowtest --net cowsay_default cowsay
+
+wget --spider -S http://cowtest:8090 2>&1 | grep HTTP/
