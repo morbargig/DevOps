@@ -1,0 +1,48 @@
+version: '3.3'
+services:
+    # db:
+        # build: 
+        #     context:  ./
+        #     dockerfile: DB.Dockerfile
+    # db:
+    #     image: mysql/mysql-server
+    #     # command: --default-authentication-plugin=mysql_native_password
+    #     restart: always
+    #     # volumes:
+    #     #     - ./mysql-dump:/docker-entrypoint-initdb.d
+    #     environment:
+    #         MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    #         MYSQL_ROOT_PASSWORD: weight
+    #         # MYSQL_ROOT_HOST: db
+    #         # MYSQL_USER: weight
+    #         # MYSQL_PASSWORD: weight
+    #     # ports: 
+    #     #     - protocol: tcp
+    #     volumes:
+    #         # - ./init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+    #         - ./create-db.sql:/docker-entrypoint-initdb.d/create-db.sql
+    #     # command: mysqld --default-authentication-plugin=mysql_native_password --skip-mysqlx
+    db:
+        image: mysql:5.7
+        ports:
+            - "32000:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        volumes:
+            - ./db:/docker-entrypoint-initdb.d/:ro
+    flask:
+        container_name: app
+        # image: app_image
+        build: .
+        ports:
+            - 8080:8080
+            - 8081:8081
+        volumes:
+            - ./app:/app
+        links:
+            - db
+            # - <path/to/your/certs>:/etc/ssl/private
+            # - ./project/static:/etc/nginx/
+        # environment:
+            # - NGINX_HOST=foobar.com
+            # - NGINX_PORT=80

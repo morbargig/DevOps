@@ -1,0 +1,4 @@
+FROM alpine:3.9 
+
+ENTRYPOINT echo "helelo im tom 404 lala beat"
+

@@ -1,0 +1,85 @@
+pipeline{
+    agent any
+
+    stages {
+        stage('pull') {
+            steps {
+                sh 'git pull || git clone https://github.com/shaked-tech/Gan-Shmuel.git .'
+                script {
+                    //GIT_COMMIT_MSG=sh (script: "git log -1 | tail -1", returnStdout: true).trim()
+                    TEAM=sh (script: "git log -1 | tail -1 | awk '{print \$1}'", returnStdout: true).trim()
+                    VERSION=sh (script: "git log -1 | tail -1 | awk '{print \$2}'", returnStdout: true).trim()
+        }
+        //echo "${GIT_COMMIT_MSG}"
+        echo "${TEAM}"
+        echo "${VERSION}"
+            }
+        }
+
+        stage('build') { // new ones to test
+            steps {
+                if (${TEAM}=="weight"){
+                    dir('Weight'){ 
+                        sh 'docker build -t weight:test -f dockerfile .'
+                        sh 'docker run -d --name=${TEAM}_test:${VERSION} weight:test'
+                    }
+                if (${TEAM}=="provider"){
+                    dir('Provider'){
+                        sh 'docker build -t provider:test -f dockerfile .'
+                        sh 'docker run -d --name=${TEAM}_test:${VERSION} provider:test'
+                    }
+                    
+                }
+            }
+        }
+        // stage('test') { // new ones to test
+        //     steps {
+        //         if (${TEAM}=="weight"){
+        //             dir('Weight'){ 
+        //                 // test $file 1.1
+        //                 // use result
+        //                 // if works docker rm -f "name:latest"
+        //                 // docker build "new name:latest"
+        //                 // docker image rm "name:latest"
+        //                 // docker run -d "new name:latest"
+        //             }
+        //         else if (${TEAM}=="provider"){
+        //             dir('Provider'){
+        //                 // test $file 1.1
+        //                 // use result
+        //                 // if works docker rm -f "name:latest"
+        //                 // docker build "new name:latest"
+        //                 // docker image rm "name:latest"
+        //                 // docker run -d "new name:latest"
+        //             }
+        //         }
+        //     }
+        // }
+
+    }
+}
+
+
+
+// git commit: "pay/weight 1.1"
+
+// bash to get last commit
+
+// if commit has "pay" || "weigth" *
+// continue build, else don't ***
+
+
+// if test works on new app:
+
+// docker container rm -f "pay"/"weight" :latest
+// docker image rm the latest?
+
+// docker build
+// docker run -d --name="pay"/"weight"_1.1
+
+
+
+
+
+
+
